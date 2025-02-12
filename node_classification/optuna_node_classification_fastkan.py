@@ -112,7 +112,7 @@ def main():
             else:
                 dataset = WebKB(root='data/'+dataset_name, name=dataset_name, transform=NormalizeFeatures())
             data = dataset[0]
-            log =f'results/best_params_fastkan_{conv_type}_{dataset_name}.json'
+            log =f'/kaggle/working/KAGNN/node_classification/results/best_params_fastkan_{conv_type}_{dataset_name}.json'
             data = data.to(device)
             study = optuna.create_study(direction='minimize')
             study.optimize(lambda trial: objective(trial, data, dataset_name, dataset, conv_type, skip, n_epochs, device), n_trials=n_trials)
