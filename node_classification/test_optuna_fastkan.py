@@ -16,7 +16,7 @@ def main():
     device = "cuda" if torch.cuda.is_available() else "cpu"
     n_epochs = 1000
     skip = True
-    log = open("results/test_log_fastkan_time.txt", "a")
+    log = open("/kaggle/working/KAGNN/node_classification/results/test_log_fastkan_time.txt", "a")
     set_seed(1)
     for dataset_name in ['Cora', 'CiteSeer', 'Actor', 'Texas','Cornell','Wisconsin', 'ogbn-arxiv']:
         for conv_type in ['gat']:
