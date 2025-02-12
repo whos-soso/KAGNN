@@ -49,7 +49,7 @@ def objective(trial, dataset_name, args):
 
 study = optuna.create_study(direction='minimize')
 study.optimize(lambda trial: objective(trial, args.dataset, args), n_trials=100)
-log_file = f'logs/{args.dataset}_{args.architecture}_{args.conv_type}'
+log_file = f'/kaggle/working/KAGNN/node_classification_clean/logs/{args.dataset}_{args.architecture}_{args.conv_type}'
 best_params = study.best_params
 params = {
         'dataset': args.dataset,
