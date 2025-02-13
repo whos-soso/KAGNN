@@ -28,7 +28,7 @@ class KANLayer(nn.Module):
             hidden_features=None,
             act_cfg=dict(type="KAT", act_init=["identity", "gelu"]),
             bias=True,
-            drop=0.,
+            drop=0.
     ):
         super().__init__()
         out_features = out_features or in_features
