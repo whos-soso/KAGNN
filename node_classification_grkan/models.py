@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 from torch_geometric.nn import  GCNConv, GATConv
-from ekan import KAN as KANLinear
+from ekan import KANLinear
 
 
 def make_mlp(num_features, hidden_dim, out_dim, hidden_layers):
