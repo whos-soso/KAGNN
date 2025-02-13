@@ -45,15 +45,15 @@ class KAGATConv(GATConv):
         super(KAGATConv, self).__init__(in_feat, out_feat, heads)
         self.lin = KANLayer(in_feat, out_feat*heads, grid_size, spline_order)
 
-class GIKANLayer(GINConv):
-    def __init__(self, in_feat:int,
-                 out_feat:int,
-                 grid_size:int=4,
-                 spline_order:int=3,
-                 hidden_dim:int=16,
-                 nb_layers:int=2):
-        kan = make_kan(in_feat, hidden_dim, out_feat, nb_layers, grid_size, spline_order)
-        GINConv.__init__(self, kan)
+# class GIKANLayer(GINConv):
+#     def __init__(self, in_feat:int,
+#                  out_feat:int,
+#                  grid_size:int=4,
+#                  spline_order:int=3,
+#                  hidden_dim:int=16,
+#                  nb_layers:int=2):
+#         kan = make_kan(in_feat, hidden_dim, out_feat, nb_layers, grid_size, spline_order)
+#         GINConv.__init__(self, kan)
 
 class FKANLayer(FastKANLayer):
     def __init__(self, input_dim, output_dim, num_grids=4):
@@ -82,14 +82,14 @@ class FASTKAGATConv(GATConv):
         self.grid_size = grid_size
         self.lin = FKANLayer(in_feat, out_feat*heads, grid_size)
 
-class GIFASTKANLayer(GINConv):
-    def __init__(self, in_feat:int,
-                 out_feat:int,
-                 grid_size:int=4,
-                 hidden_dim:int=16,
-                 nb_layers:int=2):
-        kan = make_fastkan(in_feat, hidden_dim, out_feat, nb_layers, grid_size)
-        GINConv.__init__(self, kan)
+# class GIFASTKANLayer(GINConv):
+#     def __init__(self, in_feat:int,
+#                  out_feat:int,
+#                  grid_size:int=4,
+#                  hidden_dim:int=16,
+#                  nb_layers:int=2):
+#         kan = make_fastkan(in_feat, hidden_dim, out_feat, nb_layers, grid_size)
+#         GINConv.__init__(self, kan)
 
 class GNN_Nodes(torch.nn.Module):
     def __init__(self,  conv_type :str,
