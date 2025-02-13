@@ -54,10 +54,10 @@ class KAN(torch.nn.Module):
                 KANLinear(
                     in_features,
                     out_features,
-                    hidden_features=hidden_features,
-                    base_activation=base_activation,
-                    bias=bias,
-                    drop=drop,
+                    # hidden_features=hidden_features,
+                    # base_activation=base_activation,
+                    # bias=bias,
+                    # drop=drop,
                 )
             )
 
