@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 from torch_geometric.nn import  GCNConv, GATConv
-from kat_rational import KAT_Group
+from ekan import KAN as KANLinear
 
 
 def make_mlp(num_features, hidden_dim, out_dim, hidden_layers):
@@ -15,37 +15,9 @@ def make_mlp(num_features, hidden_dim, out_dim, hidden_layers):
     mlp = nn.Sequential(*list_hidden)
     return(mlp)
 
-class KANLayer(nn.Module):
-    """MLP as used in Vision Transformer, MLP-Mixer and related networks."""
-
-    def __init__(
-            self,
-            in_features,
-            out_features,
-            hidden_features=None,
-            act_cfg=dict(type="KAT", act_init=["identity", "gelu"]),
-            bias=True,
-            drop=0.
-    ):
-        super().__init__()
-        out_features = out_features or in_features
-        hidden_features = hidden_features or in_features
-
-        self.fc1 = nn.Linear(in_features, hidden_features, bias=bias)
-        self.act1 = KAT_Group(mode = act_cfg['act_init'][0])
-        self.drop1 = nn.Dropout(drop)
-        self.act2 = KAT_Group(mode = act_cfg['act_init'][1])
-        self.fc2 = nn.Linear(hidden_features, out_features, bias=bias)
-        self.drop2 = nn.Dropout(drop)
-
-    def forward(self, x):
-        x = self.act1(x)
-        x = self.drop1(x)
-        x = self.fc1(x)
-        x = self.act2(x)
-        x = self.drop2(x)
-        x = self.fc2(x)
-        return x
+class KANLayer(KANLinear):
+    def __init__(self, input_dim, output_dim):
+        super(KANLayer, self).__init__(in_features=input_dim, out_features=output_dimr)
 
 class KAGCNConv(GCNConv):
     def __init__(self, in_feat:int,
