@@ -25,8 +25,6 @@ def objective(trial, dataset_name, args):
             'epochs': args.epochs,
             'hidden_layers': 0,
             'dropout': 0.,
-            'grid_size': 0,
-            'spline_order': 0,
             'rate_print': args.rate_print,
             'skip': args.skip,
             'heads': args.heads
@@ -39,11 +37,8 @@ def objective(trial, dataset_name, args):
         params['hidden_channels'] = trial.suggest_int('hidden_channels', 1, 256)
     elif params['architecture']=='fastkan':
         params['hidden_channels'] = trial.suggest_int('hidden_channels', 2, 128)
-        params['grid_size'] = trial.suggest_int('grid_size', 2, 32)
     elif params['architecture']=='kan':
         params['hidden_channels'] = trial.suggest_int('hidden_channels', 2, 128)
-        params['grid_size'] = trial.suggest_int('grid_size', 1, 8)
-        params['spline_order'] = trial.suggest_int('spline_order', 1, 3)
     mva,_,_,_ = run_experiment(params, dataset_name)
     return(mva)
 
