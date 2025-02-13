@@ -1,8 +1,6 @@
-from ekan import KAN as eKAN,KANLinear
 import torch
-
 import torch.nn as nn
-from torch_geometric.nn import GINConv, GCNConv, GATConv
+from torch_geometric.nn import  GCNConv, GATConv
 from kat_rational import KAT_Group
 
 
