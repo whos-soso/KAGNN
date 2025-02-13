@@ -5,7 +5,7 @@ import numpy as np
 import torch
 import torch_geometric as pyg
 from torch.optim import Optimizer
-from models import GNN_Nodes, GKAN_Nodes, GFASTKAN_Nodes
+from models import GNN_Nodes, GKAN_Nodes
 from torch_geometric.datasets import Planetoid
 from torch_geometric.transforms import NormalizeFeatures
 from torch_geometric.datasets import Actor, WebKB
@@ -105,20 +105,9 @@ def make_model(params):
                             skip=params['skip'],
                             hidden_layers=params['hidden_layers'],
                             dropout=params['dropout'],
-                            grid_size=params['grid_size'],
-                            spline_order=params['spline_order'],
                             heads=params['heads'])
     elif params['architecture']=='fastkan':
-        model = GFASTKAN_Nodes(conv_type=params['conv_type'],
-                            mp_layers=params['mp_layers'],
-                            num_features=params['num_features'],
-                            hidden_channels=params['hidden_channels'],
-                            num_classes=params['num_classes'],
-                            skip=params['skip'],
-                            hidden_layers=params['hidden_layers'],
-                            dropout=params['dropout'],
-                            grid_size=params['grid_size'],
-                            heads=params['heads'])
+        print("fastkan is here")
     print(count_params(model))
     return(model)
 
