@@ -16,13 +16,13 @@ def make_mlp(num_features, hidden_dim, out_dim, hidden_layers):
     mlp = nn.Sequential(*list_hidden)
     return(mlp)
 
-def make_kan(num_features, hidden_dim, out_dim, hidden_layers, grid_size, spline_order):
-    sizes = [num_features] + [hidden_dim]*(hidden_layers-1) + [out_dim]
-    return(eKAN(layers_hidden=sizes, grid_size=grid_size, spline_order=spline_order))
+# def make_kan(num_features, hidden_dim, out_dim, hidden_layers, grid_size, spline_order):
+#     sizes = [num_features] + [hidden_dim]*(hidden_layers-1) + [out_dim]
+#     return(eKAN(layers_hidden=sizes, grid_size=grid_size, spline_order=spline_order))
 
-def make_fastkan(num_features, hidden_dim, out_dim, hidden_layers, grid_size):
-    sizes = [num_features] + [hidden_dim]*(hidden_layers-1) + [out_dim]
-    return(FastKAN(layers_hidden=sizes, num_grids=grid_size))
+# def make_fastkan(num_features, hidden_dim, out_dim, hidden_layers, grid_size):
+#     sizes = [num_features] + [hidden_dim]*(hidden_layers-1) + [out_dim]
+#     return(FastKAN(layers_hidden=sizes, num_grids=grid_size))
 
 class KANLayer(KANLinear):
     def __init__(self, input_dim, output_dim, grid_size=4, spline_order=3):
