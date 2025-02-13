@@ -17,7 +17,7 @@ def make_mlp(num_features, hidden_dim, out_dim, hidden_layers):
 
 class KANLayer(KANLinear):
     def __init__(self, input_dim, output_dim):
-        super(KANLayer, self).__init__(in_features=input_dim, out_features=output_dimr)
+        super(KANLayer, self).__init__(in_features=input_dim, out_features=output_dim)
 
 class KAGCNConv(GCNConv):
     def __init__(self, in_feat:int,
