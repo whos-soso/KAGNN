@@ -1,5 +1,6 @@
 
 import torch
+import torch.nn as nn
 import torch.nn.functional as F
 import math
 from kat_rational import KAT_Group
