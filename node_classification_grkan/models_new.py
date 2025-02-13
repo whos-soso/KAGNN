@@ -1,5 +1,4 @@
 from ekan import KAN as eKAN,KANLinear
-from fastkan import FastKAN,FastKANLayer
 import torch
 
 import torch.nn as nn
@@ -62,6 +61,21 @@ class KAGATConv(GATConv):
                  heads:int):
         super(KAGATConv, self).__init__(in_feat, out_feat, heads)
         self.lin = KANLayer(in_feat, out_feat*heads)
+
+def make_kan(num_features, hidden_dim, out_dim, hidden_layers, grid_size, spline_order):
+    sizes = [num_features] + [hidden_dim]*(hidden_layers-1) + [out_dim]
+    return(eKAN(layers_hidden=sizes, grid_size=grid_size, spline_order=spline_order))
+
+class GIKANLayer(GINConv):
+    def __init__(self, in_feat:int,
+                 out_feat:int,
+                 grid_size:int=4,
+                 spline_order:int=3,
+                 hidden_dim:int=16,
+                 nb_layers:int=2):
+        kan = make_kan(in_feat, hidden_dim, out_feat, nb_layers, grid_size, spline_order)
+        GINConv.__init__(self, kan)
+
 
 
 class GNN_Nodes(torch.nn.Module):
