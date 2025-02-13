@@ -62,19 +62,6 @@ class KAGATConv(GATConv):
         super(KAGATConv, self).__init__(in_feat, out_feat, heads)
         self.lin = KANLayer(in_feat, out_feat*heads)
 
-def make_kan(num_features, hidden_dim, out_dim, hidden_layers, grid_size, spline_order):
-    sizes = [num_features] + [hidden_dim]*(hidden_layers-1) + [out_dim]
-    return(eKAN(layers_hidden=sizes, grid_size=grid_size, spline_order=spline_order))
-
-class GIKANLayer(GINConv):
-    def __init__(self, in_feat:int,
-                 out_feat:int,
-                 grid_size:int=4,
-                 spline_order:int=3,
-                 hidden_dim:int=16,
-                 nb_layers:int=2):
-        kan = make_kan(in_feat, hidden_dim, out_feat, nb_layers, grid_size, spline_order)
-        GINConv.__init__(self, kan)
 
 
 
@@ -101,7 +88,7 @@ class GNN_Nodes(torch.nn.Module):
                 elif conv_type == "gat":
                     self.convs.append(GATConv(num_features, hidden_channels, heads))
                 elif conv_type == "gin":
-                    self.convs.append(GINConv(make_mlp(num_features, hidden_channels, hidden_channels, hidden_layers)))
+                    print("gin is here")
                 else:
                     raise ValueError("unknown conv_type")
             else:
@@ -110,7 +97,7 @@ class GNN_Nodes(torch.nn.Module):
                 elif conv_type == "gat":
                     self.convs.append(GATConv(hidden_channels*heads, hidden_channels, heads))
                 elif conv_type == "gin":
-                    self.convs.append(GINConv(make_mlp(hidden_channels, hidden_channels, hidden_channels, hidden_layers)))
+                    print("gin is here")
             self.bns.append(nn.BatchNorm1d(hidden_channels*heads))
         self.skip = skip
         dim_out_message_passing = num_features+(mp_layers)*hidden_channels if skip else hidden_channels
@@ -141,8 +128,6 @@ class GKAN_Nodes(torch.nn.Module):
                  hidden_channels:int,
                  num_classes:int,
                  skip:bool = True,
-                 grid_size:int = 4,
-                 spline_order:int = 3,
                  hidden_layers:int=2,
                  dropout:float=0.,
                  heads=4):
@@ -154,26 +139,26 @@ class GKAN_Nodes(torch.nn.Module):
         for i in range(mp_layers):
             if i ==0:
                 if conv_type == "gcn":
-                    self.convs.append(KAGCNConv(num_features, hidden_channels, grid_size, spline_order))
+                    self.convs.append(KAGCNConv(num_features, hidden_channels))
                 elif conv_type == "gat":
-                    self.convs.append(KAGATConv(num_features, hidden_channels, heads, grid_size, spline_order))
+                    self.convs.append(KAGATConv(num_features, hidden_channels, heads))
                 elif conv_type == "gin":
-                    self.convs.append(GIKANLayer(num_features, hidden_channels, grid_size, spline_order, hidden_channels, hidden_layers))
+                    print("gin is here")
                 else:
                     raise ValueError("unknown conv_type")
             else:
                 if conv_type == "gcn":
-                    self.convs.append(KAGCNConv(hidden_channels, hidden_channels, grid_size, spline_order))
+                    self.convs.append(KAGCNConv(hidden_channels, hidden_channels))
                 elif conv_type == "gat":
-                    self.convs.append(KAGATConv(hidden_channels*heads, hidden_channels, heads, grid_size, spline_order))
+                    self.convs.append(KAGATConv(hidden_channels*heads, hidden_channels, heads))
                 else:
-                    self.convs.append(GIKANLayer(hidden_channels, hidden_channels, grid_size, spline_order, hidden_channels, hidden_layers))
+                    print("gin is here")
             self.bns.append(nn.BatchNorm1d(hidden_channels*heads))
         self.skip = skip
         dim_out_message_passing = num_features+mp_layers*hidden_channels if skip else hidden_channels
         if conv_type == "gat":
             dim_out_message_passing = num_features+mp_layers*hidden_channels*heads if skip else hidden_channels*heads
-        self.lay_out = KANLinear(dim_out_message_passing, num_classes, grid_size=grid_size, spline_order=spline_order)
+        self.lay_out = KANLinear(dim_out_message_passing, num_classes)
         self.dropout = torch.nn.Dropout(dropout)
 
     def forward(self, x: torch.tensor, edge_index: torch.tensor):
