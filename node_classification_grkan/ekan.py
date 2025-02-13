@@ -44,7 +44,7 @@ class KAN(torch.nn.Module):
     def __init__(
         self,
         layers_hidden,
-        base_activation=torch.nn.SiLU,
+        #base_activation=torch.nn.SiLU,
     ):
         super(KAN, self).__init__()
         self.layers = torch.nn.ModuleList()
