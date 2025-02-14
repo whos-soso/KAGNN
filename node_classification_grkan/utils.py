@@ -153,7 +153,7 @@ def train_total(model, params, data, train_mask, val_mask, test_mask=None):
         test_mask = val_mask
     early_stopper = EarlyStopper(patience=params['patience'])
     optimizer = torch.optim.Adam(model.parameters(), lr=params['lr'])
-    criterion = torch.nn.SmoothL1Loss()
+    criterion = torch.nn.CrossEntropyLoss()
     for epoch in range(params['epochs']):
         train_one_epoch(model, data, train_mask, optimizer, criterion)
         with torch.no_grad():
