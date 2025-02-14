@@ -7,7 +7,7 @@ import os
 
 
 class KAT_Group(nn.Module):
-    def __init__(self, num_groups=64, mode="gelu", device="cuda"):
+    def __init__(self, num_groups=8, mode="gelu", device="cuda"):
         """
         Initialize the KAT_Group module.
 
