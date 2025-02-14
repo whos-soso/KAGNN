@@ -112,15 +112,7 @@ def make_model(params):
     print(count_params(model))
     return(model)
 
-def train_one_epoch(model, data, train_mask, optimizer, criterion):
-    model.train()
-    optimizer.zero_grad()  # Clear gradients.
-    out = model(data.x,data.edge_index)  # Perform a single forward pass.
-    loss = criterion(out[train_mask], data.y[train_mask])  # Compute the loss solely based on the training nodes.
-    loss.backward()  # Derive gradients.
-    optimizer.step()  # Update parameters based on gradients.
-    optimizer.zero_grad()
-    return loss, out
+
 
 def evaluate_accuracy(model, data, mask):
     with torch.no_grad():
@@ -138,10 +130,30 @@ def efficient_evaluation_accuracy(y, out, mask):
         acc = int(correct.sum()) / int(mask.sum())  # Derive ratio of correct predictions.
         return acc
 
-def efficient_evaluation_loss(y, out, mask, criterion):
+
+def stable_cross_entropy_loss(logits, target):
+    # 对 logits 应用 log-softmax（防止 softmax 溢出）
+    log_probs = F.log_softmax(logits, dim=-1)
+    
+    # 计算损失
+    loss = F.nll_loss(log_probs, target, reduction='mean')
+    return loss
+
+def efficient_evaluation_loss(y, out, mask):
     with torch.no_grad():
-        loss = criterion(out[mask], y[mask])
+        loss = stable_cross_entropy_loss(out[mask], y[mask])
         return loss
+
+def train_one_epoch(model, data, train_mask, optimizer):
+    model.train()
+    optimizer.zero_grad()  # Clear gradients.
+    out = model(data.x,data.edge_index)  # Perform a single forward pass.
+    loss = stable_cross_entropy_loss(out[train_mask], data.y[train_mask])  # Compute the loss solely based on the training nodes.
+    loss.backward()  # Derive gradients.
+    optimizer.step()  # Update parameters based on gradients.
+    optimizer.zero_grad()
+    return loss, out
+
 
 def train_total(model, params, data, train_mask, val_mask, test_mask=None):
     torch.save(model, f"/kaggle/working/KAGNN/node_classification_grkan/models_saves/{params['dataset']}_{params['architecture']}_{params['conv_type']}")
@@ -151,10 +163,10 @@ def train_total(model, params, data, train_mask, val_mask, test_mask=None):
     optimizer = torch.optim.Adam(model.parameters(), lr=params['lr'])
     criterion = torch.nn.CrossEntropyLoss()
     for epoch in range(params['epochs']):
-        train_one_epoch(model, data, train_mask, optimizer, criterion)
+        train_one_epoch(model, data, train_mask, optimizer)
         with torch.no_grad():
             out = model(data.x, data.edge_index)
-            val_loss = efficient_evaluation_loss(data.y, out, val_mask, criterion)
+            val_loss = efficient_evaluation_loss(data.y, out, val_mask)
         if not ((epoch+1)%params['rate_print']):
             with torch.no_grad():
                 train_acc = efficient_evaluation_accuracy(data.y, out, train_mask)
@@ -171,7 +183,7 @@ def train_total(model, params, data, train_mask, val_mask, test_mask=None):
     train_acc = efficient_evaluation_accuracy(data.y, out, train_mask)
     val_acc = efficient_evaluation_accuracy(data.y, out, val_mask)
     test_acc = efficient_evaluation_accuracy(data.y, out, test_mask)
-    val_loss = efficient_evaluation_loss(data.y, out, val_mask, criterion)
+    val_loss = efficient_evaluation_loss(data.y, out, val_mask)
     print(f'Train acc: {train_acc}, Val acc: {val_acc},Val loss: {val_loss}, Test acc: {test_acc}')
     return(model, train_acc, val_acc, val_loss, test_acc)
 
