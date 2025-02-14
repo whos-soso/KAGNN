@@ -103,7 +103,7 @@ class GKAN_Nodes(torch.nn.Module):
                  dropout:float=0.,
                  heads=4):
         super().__init__()
-        self.softmax=nn.Softmax(dim=1)  #val loss appears nan,append softmax layer for test
+        #self.softmax=nn.Softmax(dim=1)  #val loss appears nan,append softmax layer for test
         self.convs = torch.nn.ModuleList()
         self.bns = torch.nn.ModuleList()
         if conv_type!='gat':
