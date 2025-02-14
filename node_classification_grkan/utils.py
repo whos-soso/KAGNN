@@ -131,48 +131,24 @@ def evaluate_accuracy(model, data, mask):
         acc = int(correct.sum()) / int(mask.sum())  # Derive ratio of correct predictions.
         return acc
 
-def evaluate_loss(model, data, mask, criterion):
+
+def efficient_evaluation_loss(y, out, mask, criterion):
     with torch.no_grad():
-        model.eval()
-        out = model(data.x,data.edge_index)
-        loss = criterion(out[mask], data.y[mask])
-        return loss, out
-
-def efficient_evaluation_accuracy(y, out, mask):
-    with torch.no_grad():
-        pred = out.argmax(dim=1)  # Use the class with highest probability.
-        correct = pred[mask] == y[mask]  # Check against ground-truth labels.
-        acc = int(correct.sum()) / int(mask.sum())  # Derive ratio of correct predictions.
-        return acc
-
-
-def stable_cross_entropy_loss(logits, target):
-    # 对 logits 应用 log-softmax（防止 softmax 溢出）
-    log_probs = F.log_softmax(logits, dim=-1)
-    
-    # 计算损失
-    loss = F.nll_loss(log_probs, target, reduction='mean')
-    return loss
-
-def efficient_evaluation_loss(y, out, mask):
-    with torch.no_grad():
-        #out = model(data.x, data.edge_index)
-        loss = stable_cross_entropy_loss(out[mask], y[mask])
+        loss = criterion(out[mask], y[mask])
         return loss
 
 def train_total(model, params, data, train_mask, val_mask, test_mask=None):
-    torch.save(model, f"/kaggle/working/KAGNN/node_classification_grkan/models_saves/{params['dataset']}_{params['architecture']}_{params['conv_type']}")
+    torch.save(model, f"models_saves/{params['dataset']}_{params['architecture']}_{params['conv_type']}")
     if test_mask is None:
         test_mask = val_mask
     early_stopper = EarlyStopper(patience=params['patience'])
-    optimizer = torch.optim.AdamW(model.parameters(), lr=params['lr'])
+    optimizer = torch.optim.Adam(model.parameters(), lr=params['lr'])
     criterion = torch.nn.CrossEntropyLoss()
-    #criterion = F.log_softmax()
     for epoch in range(params['epochs']):
         train_one_epoch(model, data, train_mask, optimizer, criterion)
         with torch.no_grad():
             out = model(data.x, data.edge_index)
-            val_loss = efficient_evaluation_loss(data.y, out, val_mask)
+            val_loss = efficient_evaluation_loss(data.y, out, val_mask, criterion)
         if not ((epoch+1)%params['rate_print']):
             with torch.no_grad():
                 train_acc = efficient_evaluation_accuracy(data.y, out, train_mask)
@@ -181,7 +157,7 @@ def train_total(model, params, data, train_mask, val_mask, test_mask=None):
                 print(f'Train acc: {train_acc}, Val acc: {val_acc}, Test acc: {test_acc}')
         should_save, should_stop = early_stopper.early_stop(val_loss)
         if should_save:
-            torch.save(model, f"/kaggle/working/KAGNN/node_classification_grkan/models_saves/{params['dataset']}_{params['architecture']}_{params['conv_type']}")
+            torch.save(model, f"models_saves/{params['dataset']}_{params['architecture']}_{params['conv_type']}")
         if should_stop:
             break
     print("load")
@@ -189,7 +165,7 @@ def train_total(model, params, data, train_mask, val_mask, test_mask=None):
     train_acc = efficient_evaluation_accuracy(data.y, out, train_mask)
     val_acc = efficient_evaluation_accuracy(data.y, out, val_mask)
     test_acc = efficient_evaluation_accuracy(data.y, out, test_mask)
-    val_loss = efficient_evaluation_loss(data.y, out, val_mask)
+    val_loss = efficient_evaluation_loss(data.y, out, val_mask, criterion)
     print(f'Train acc: {train_acc}, Val acc: {val_acc},Val loss: {val_loss}, Test acc: {test_acc}')
     return(model, train_acc, val_acc, val_loss, test_acc)
 
