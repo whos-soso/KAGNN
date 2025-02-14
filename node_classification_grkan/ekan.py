@@ -14,7 +14,7 @@ class KANLinear(torch.nn.Module):
             in_features,
             out_features,
             hidden_features=None,
-            base_activation=dict(type="KAT", act_init=["gelu", "gelu"]),
+            base_activation=dict(type="KAT", act_init=["swishglu", "swishglu"]),
             bias=True,
             drop=0.,
     ):
