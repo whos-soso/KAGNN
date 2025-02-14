@@ -147,7 +147,7 @@ def efficient_evaluation_accuracy(y, out, mask):
 
 def efficient_evaluation_loss(y, out, mask, criterion):
     with torch.no_grad():
-        loss = criterion(out[mask]+1e-8,, y[mask])
+        loss = criterion(out[mask]+1e-8, y[mask])
         return loss
 
 def train_total(model, params, data, train_mask, val_mask, test_mask=None):
