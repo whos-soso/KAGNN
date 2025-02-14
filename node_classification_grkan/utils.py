@@ -172,7 +172,7 @@ def train_total(model, params, data, train_mask, val_mask, test_mask=None):
         train_one_epoch(model, data, train_mask, optimizer, criterion)
         with torch.no_grad():
             out = model(data.x, data.edge_index)
-            val_loss = efficient_evaluation_loss(data.y, out, val_mask, criterion)
+            val_loss = efficient_evaluation_loss(data.y, out, val_mask)
         if not ((epoch+1)%params['rate_print']):
             with torch.no_grad():
                 train_acc = efficient_evaluation_accuracy(data.y, out, train_mask)
