@@ -130,7 +130,13 @@ def evaluate_accuracy(model, data, mask):
         correct = pred[mask] == data.y[mask]  # Check against ground-truth labels.
         acc = int(correct.sum()) / int(mask.sum())  # Derive ratio of correct predictions.
         return acc
-
+        
+def efficient_evaluation_accuracy(y, out, mask):
+    with torch.no_grad():
+        pred = out.argmax(dim=1)  # Use the class with highest probability.
+        correct = pred[mask] == y[mask]  # Check against ground-truth labels.
+        acc = int(correct.sum()) / int(mask.sum())  # Derive ratio of correct predictions.
+        return acc
 
 def efficient_evaluation_loss(y, out, mask, criterion):
     with torch.no_grad():
