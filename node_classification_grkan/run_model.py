@@ -19,7 +19,7 @@ data = load_data(args.dataset)
 params = {'hidden_channels':8,
             'mp_layers': dataset_layers[args.dataset],
             'hidden_layers':2,
-            'lr':0.001,
+            'lr':0.01,
             'dropout':0,
             'model_type':args.model_type,
             'architecture':args.architecture,
