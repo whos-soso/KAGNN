@@ -138,7 +138,7 @@ def efficient_evaluation_loss(y, out, mask, criterion):
         return loss
 
 def train_total(model, params, data, train_mask, val_mask, test_mask=None):
-    torch.save(model, f"models_saves/{params['dataset']}_{params['architecture']}_{params['conv_type']}")
+    torch.save(model, f"/kaggle/working/KAGNN/node_classification_grkan/models_saves/{params['dataset']}_{params['architecture']}_{params['conv_type']}")
     if test_mask is None:
         test_mask = val_mask
     early_stopper = EarlyStopper(patience=params['patience'])
@@ -157,7 +157,7 @@ def train_total(model, params, data, train_mask, val_mask, test_mask=None):
                 print(f'Train acc: {train_acc}, Val acc: {val_acc}, Test acc: {test_acc}')
         should_save, should_stop = early_stopper.early_stop(val_loss)
         if should_save:
-            torch.save(model, f"models_saves/{params['dataset']}_{params['architecture']}_{params['conv_type']}")
+            torch.save(model, f"/kaggle/working/KAGNN/node_classification_grkan/models_saves/{params['dataset']}_{params['architecture']}_{params['conv_type']}")
         if should_stop:
             break
     print("load")
