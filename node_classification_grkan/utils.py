@@ -136,7 +136,7 @@ def efficient_evaluation_loss(y, out, mask, criterion):
         loss = criterion(out[mask], y[mask])
         return loss
 
-def train_one_epoch(model, data, train_mask, optimizer，criterion):
+def train_one_epoch(model, data, train_mask, optimizer, criterion):
     model.train()
     optimizer.zero_grad()  # Clear gradients.
     out = model(data.x,data.edge_index)  # Perform a single forward pass.
