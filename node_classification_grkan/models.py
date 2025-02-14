@@ -90,7 +90,7 @@ class GNN_Nodes(torch.nn.Module):
         if self.skip:
             x = torch.cat(l, dim=1)
         x = self.lay_out(x)
-        return x
+        return F.log_softmax(x, dim=1)
 
 class GKAN_Nodes(torch.nn.Module):
     def __init__(self,  conv_type :str,
