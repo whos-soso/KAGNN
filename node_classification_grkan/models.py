@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 from torch_geometric.nn import  GCNConv, GATConv
+import torch.nn.functional as F
 from ekan import KANLinear
 
 
@@ -143,4 +144,4 @@ class GKAN_Nodes(torch.nn.Module):
         if self.skip:
             x = torch.cat(l, dim=1)
         x = self.lay_out(x)
-        return x
+        return F.log_softmax(x, dim=1)
