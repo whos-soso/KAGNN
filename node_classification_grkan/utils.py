@@ -135,7 +135,7 @@ def evaluate_loss(model, data, mask, criterion):
     with torch.no_grad():
         model.eval()
         out = model(data.x,data.edge_index)
-        loss = criterion(out[mask],, data.y[mask])
+        loss = criterion(out[mask], data.y[mask])
         return loss, out
 
 def efficient_evaluation_accuracy(y, out, mask):
