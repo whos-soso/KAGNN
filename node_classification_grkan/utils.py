@@ -145,9 +145,19 @@ def efficient_evaluation_accuracy(y, out, mask):
         acc = int(correct.sum()) / int(mask.sum())  # Derive ratio of correct predictions.
         return acc
 
-def efficient_evaluation_loss(y, out, mask, criterion):
+
+def stable_cross_entropy_loss(logits, target):
+    # 对 logits 应用 log-softmax（防止 softmax 溢出）
+    log_probs = F.log_softmax(logits, dim=-1)
+    
+    # 计算损失
+    loss = F.nll_loss(log_probs, target, reduction='mean')
+    return loss
+
+def efficient_evaluation_loss(y, out, mask):
     with torch.no_grad():
-        loss = criterion(out[mask]+1e-8, y[mask])
+        #out = model(data.x, data.edge_index)
+        loss = stable_cross_entropy_loss(out[mask], y[mask])
         return loss
 
 def train_total(model, params, data, train_mask, val_mask, test_mask=None):
@@ -155,7 +165,7 @@ def train_total(model, params, data, train_mask, val_mask, test_mask=None):
     if test_mask is None:
         test_mask = val_mask
     early_stopper = EarlyStopper(patience=params['patience'])
-    optimizer = torch.optim.Adam(model.parameters(), lr=params['lr'])
+    optimizer = torch.optim.AdamW(model.parameters(), lr=params['lr'])
     criterion = torch.nn.CrossEntropyLoss()
     #criterion = F.log_softmax()
     for epoch in range(params['epochs']):
