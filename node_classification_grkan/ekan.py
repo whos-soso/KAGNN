@@ -13,20 +13,17 @@ class KANLinear(torch.nn.Module):
             self,
             in_features,
             out_features,
-            hidden_features=None,
             base_activation=dict(type="KAT", act_init=["swishglu", "swishglu"]),
             bias=True,
             drop=0.,
     ):
         super().__init__()
         out_features = out_features or in_features
-        hidden_features = hidden_features or in_features
 
-        self.fc1 = nn.Linear(in_features, hidden_features, bias=bias)
+        self.fc1 = nn.Linear(in_features, out_features, bias=bias)
         self.act1 = KAT_Group(mode = base_activation['act_init'][0])
         self.drop1 = nn.Dropout(drop)
         self.act2 = KAT_Group(mode = base_activation['act_init'][1])
-        self.fc2 = nn.Linear(hidden_features, out_features, bias=bias)
         self.drop2 = nn.Dropout(drop)
 
     def forward(self, x):
