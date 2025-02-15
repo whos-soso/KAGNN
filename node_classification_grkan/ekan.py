@@ -23,16 +23,12 @@ class KANLinear(torch.nn.Module):
         self.fc1 = nn.Linear(in_features, out_features, bias=bias)
         self.act1 = KAT_Group(mode = base_activation['act_init'][0])
         self.drop1 = nn.Dropout(drop)
-        self.act2 = KAT_Group(mode = base_activation['act_init'][1])
-        self.drop2 = nn.Dropout(drop)
+
 
     def forward(self, x):
         x = self.act1(x)
         x = self.drop1(x)
         x = self.fc1(x)
-        x = self.act2(x)
-        x = self.drop2(x)
-        x = self.fc2(x)
         return x
 
     
