@@ -136,14 +136,21 @@ def efficient_evaluation_loss(y, out, mask, criterion):
         loss = criterion(out[mask], y[mask])
         return loss
 
+
 def train_one_epoch(model, data, train_mask, optimizer, criterion):
     model.train()
     optimizer.zero_grad()  # Clear gradients.
-    out = model(data.x,data.edge_index)  # Perform a single forward pass.
+    out = model(data.x, data.edge_index)  # Perform a single forward pass.
+    
+    # 1. 确保输出没有 NaN 或 Inf，避免不稳定的值影响训练
+    # 通过 clamp 函数避免输出过小或过大的数值
+    out = torch.clamp(out, min=1e-8, max=1e8)  # 限制输出在一定范围内，防止极小或极大的数值  
     loss = criterion(out[train_mask], data.y[train_mask])  # Compute the loss solely based on the training nodes.
+
     loss.backward()  # Derive gradients.
+    torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)  # Clip gradients if necessary
+    
     optimizer.step()  # Update parameters based on gradients.
-    optimizer.zero_grad()
     return loss, out
 
 
