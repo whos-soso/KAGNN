@@ -54,7 +54,7 @@ def load_data(dataset_name):
         dataset.val_masks = dataset[0].val_mask.T
         dataset.test_masks = dataset[0].test_mask.T
     else:
-        dataset = WebKB(root='data/'+dataset_name, name=dataset_name, transform=NormalizeFeatures())
+        dataset = WebKB(root='root/data/'+dataset_name, name=dataset_name, transform=NormalizeFeatures())
         dataset.train_masks = dataset[0].train_mask.T
         dataset.val_masks = dataset[0].val_mask.T
         dataset.test_masks = dataset[0].test_mask.T
